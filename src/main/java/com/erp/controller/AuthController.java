@@ -32,15 +32,24 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
 
+        System.out.println("👉 Incoming username: " + request.getUsername());
+        System.out.println("👉 Incoming password: " + request.getPassword());
+
         User user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (!user.isActive()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("User is inactive");
-        }
+        System.out.println("👉 DB username: " + user.getUsername());
+        System.out.println("👉 DB password: " + user.getPassword());
+        System.out.println("👉 DB active: " + user.isActive());
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+        boolean match = passwordEncoder.matches(
+                request.getPassword(),
+                user.getPassword()
+        );
+
+        System.out.println("👉 Password match result: " + match);
+
+        if (!match) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body("Invalid credentials");
         }
@@ -52,5 +61,6 @@ public class AuthController {
                 "role", user.getRole()
         ));
     }
+
 }
 
