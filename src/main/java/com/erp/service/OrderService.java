@@ -1,5 +1,7 @@
 package com.erp.service;
 
+
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +36,17 @@ public class OrderService {
                     item.getProduct().getId()
             ).orElseThrow(() -> new RuntimeException("Product not found"));
 
+            // 🔴 STOCK CHECK
+            if (product.getStock() < item.getQuantity()) {
+                throw new RuntimeException(
+                        "Insufficient stock for product: " + product.getName()
+                );
+            }
+
+            // ✅ Reduce stock
+            product.setStock(product.getStock() - item.getQuantity());
+            productRepository.save(product);
+
             double subtotal = product.getPrice() * item.getQuantity();
 
             item.setPrice(product.getPrice());
@@ -55,4 +68,3 @@ public class OrderService {
         return orderRepository.findAll();
     }
 }
-

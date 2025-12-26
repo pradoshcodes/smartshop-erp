@@ -30,14 +30,18 @@ public class SecurityConfig {
 
 	    http
 	        .csrf(csrf -> csrf.disable())
+//	        .authorizeHttpRequests(auth -> auth
+//	            .requestMatchers("/auth/**").permitAll()
+//	            .anyRequest().authenticated()   // 🔐 now protected
+//	        )
 	        .authorizeHttpRequests(auth -> auth
-	            .requestMatchers("/auth/**").permitAll()
-	            .anyRequest().authenticated()   // 🔐 now protected
-	        )
+	        	    .requestMatchers("/**").permitAll()
+	        	)
+
 	        .formLogin(form -> form.disable())
-	        .httpBasic(basic -> basic.disable())
-	        .addFilterBefore(jwtAuthenticationFilter,
-	                org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class);
+	        .httpBasic(basic -> basic.disable());
+//	        .addFilterBefore(jwtAuthenticationFilter,
+//	                org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class);
 
 	    return http.build();
 	}
